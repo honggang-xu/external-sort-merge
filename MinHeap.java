@@ -30,6 +30,7 @@ public class MinHeap
 
 		while (child != 0 && smallerThan(child, parent))
 		{
+			//upheap
 			swap(child, parent);
 			child = parent;
 			parent = (child - 1) / 2;
@@ -37,9 +38,54 @@ public class MinHeap
 
 	}
 
-	public void remove()
+	//remove and return the root element, put the last element in root and put the heap in order
+	public String remove()
 	{
+		String result = null;
+		if (pointer > 0)
+		{
+			if (pointer == 1)
+			{
+				pointer--;
+				result = data[pointer];
+			}
+			else
+			{
+				String oldRoot = data[0];
+				String oldLast = data[pointer - 1];
+				data[0] = oldLast;
+				data[pointer - 1] = oldRoot;
+				pointer--;
+				result = data[pointer];
+				int parent = 0;
+				//left child
+				int childLeft = parent * 2 + 1;
 
+				while (childLeft < pointer)
+				{
+					//right child
+					int childRight = parent * 2 + 2;
+					//assume the mininum of the two children is left child
+					int childMin = childLeft;
+					if (childRight < pointer)
+					{
+						if (smallerThan(childRight, childLeft))
+						{
+							childMin = childRight;
+						}
+					}
+
+					if (smallerThan(childMin, parent))
+					{
+						//downheap
+						swap(childMin, parent);
+						parent = childMin;
+						childLeft = parent * 2 + 1;
+					}
+				}	
+			}
+		}
+		return result;
 	}
 
 	public void replace(String input)
@@ -47,15 +93,6 @@ public class MinHeap
 
 	}
 
-	public void downHeap()
-	{
-
-	}
-
-	public void upHeap()
-	{
-
-	}
 	//use compareTo() method from String to compare
 	public boolean smallerThan(int a, int b)
 	{
@@ -88,7 +125,13 @@ public class MinHeap
 		heapT.insert("ccccdd");
 		heapT.insert("zzzzz");
 		for (int i = 0; i < 5; i++)
-		System.out.println(heapT.get(i));
+			System.out.println(heapT.get(i));
+		System.out.println(heapT.remove());
+		System.out.println(heapT.remove());
+		System.out.println(heapT.remove());
+		System.out.println(heapT.remove());
+		System.out.println(heapT.remove());
+		System.out.println(heapT.remove());
 	}
 
 }
