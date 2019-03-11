@@ -28,6 +28,7 @@ public class MinHeap
 			pointer++;
 		}
 
+		//try to upheap if the condition is true
 		while (child != 0 && smallerThan(child, parent))
 		{
 			//upheap
@@ -61,6 +62,7 @@ public class MinHeap
 				//left child
 				int childLeft = parent * 2 + 1;
 
+				//try to downheap if the condition is true
 				while (childLeft < pointer)
 				{
 					//right child
@@ -88,9 +90,80 @@ public class MinHeap
 		return result;
 	}
 
-	public void replace(String input)
+	//output item at the root and insert new item at the root and downheap
+	public String replace(String input)
 	{
+		String result = null;
+		if (pointer != 0)
+		{
+			result = data[0];
+			data[0] = input;
 
+			int parent = 0;
+			//left child
+			int childLeft = parent * 2 + 1;
+
+			//try to downheap if the condition is true
+			while (childLeft < pointer)
+			{
+				//right child
+				int childRight = parent * 2 + 2;
+				//assume the mininum of the two children is left child
+				int childMin = childLeft;
+				if (childRight < pointer)
+				{
+					if (smallerThan(childRight, childLeft))
+					{
+						childMin = childRight;
+					}
+				}
+
+				if (smallerThan(childMin, parent))
+				{
+					//downheap
+					swap(childMin, parent);
+					parent = childMin;
+					childLeft = parent * 2 + 1;
+				}
+			}
+		}
+		return result;
+	}
+
+	//heap sort the items in the heap that is of a specified size
+	public void reheap(int size) {
+		//the first possible parent node is the middle point
+		int middle = size / 2 - 1;
+		
+		while (middle >= 0)
+		{
+			int parent = middle;
+			//left child
+			int childLeft = parent * 2 + 1;
+			//try to downheap if the condition is true
+			while (childLeft < size)
+			{
+				//right child
+				int childRight = parent * 2 + 2;
+				//assume the mininum of the two children is left child
+				int childMin = childLeft;
+				if (childRight < size)
+				{
+					if (smallerThan(childRight, childLeft))
+					{
+						childMin = childRight;
+					}
+				}
+				if (smallerThan(childMin, parent))
+				{
+					//downheap
+					swap(childMin, parent);
+					parent = childMin;
+					childLeft = parent * 2 + 1;
+				}
+			}
+			middle--;
+		}
 	}
 
 	//use compareTo() method from String to compare
@@ -119,19 +192,37 @@ public class MinHeap
 	public static void main(String [] args)
 	{
 		MinHeap heapT = new MinHeap(5);
+
+		System.out.println("--- insert 5 items into the heap ---");
 		heapT.insert("bbdsf");
 		heapT.insert("yzdd");
 		heapT.insert("aadd");
 		heapT.insert("ccccdd");
 		heapT.insert("zzzzz");
+
+		System.out.println("--- display all the items in the heap ---");
 		for (int i = 0; i < 5; i++)
 			System.out.println(heapT.get(i));
+
+		System.out.println("--- replace the root item in the heap and out put the old root ---");
+		System.out.println(heapT.replace("ffffdd"));
+
+		System.out.println("--- remove all the items one by one ---");
 		System.out.println(heapT.remove());
 		System.out.println(heapT.remove());
 		System.out.println(heapT.remove());
 		System.out.println(heapT.remove());
 		System.out.println(heapT.remove());
 		System.out.println(heapT.remove());
+
+		System.out.println("--- display the items in the heap(they should not be in ascending order) ---");
+		for (int i = 0; i < 5; i++)
+			System.out.println(heapT.get(i));
+
+		System.out.println("--- reheap and display all the items ---");
+		heapT.reheap(5);
+		for (int i = 0; i < 5; i++)
+			System.out.println(heapT.get(i));
 	}
 
 }
