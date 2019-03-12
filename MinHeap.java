@@ -84,6 +84,7 @@ public class MinHeap
 						parent = childMin;
 						childLeft = parent * 2 + 1;
 					}
+					break;
 				}	
 			}
 		}
@@ -125,6 +126,7 @@ public class MinHeap
 					parent = childMin;
 					childLeft = parent * 2 + 1;
 				}
+				break;
 			}
 		}
 		return result;
@@ -133,36 +135,57 @@ public class MinHeap
 	//heap sort the items in the heap that is of a specified size
 	public void reheap(int size) {
 		//the first possible parent node is the middle point
+
 		int middle = size / 2 - 1;
-		
+
 		while (middle >= 0)
 		{
 			int parent = middle;
+			
+
 			//left child
 			int childLeft = parent * 2 + 1;
+			
 			//try to downheap if the condition is true
 			while (childLeft < size)
 			{
+				
+
 				//right child
 				int childRight = parent * 2 + 2;
+				
+
 				//assume the mininum of the two children is left child
 				int childMin = childLeft;
+				
+
 				if (childRight < size)
 				{
+					
 					if (smallerThan(childRight, childLeft))
 					{
+						
 						childMin = childRight;
+						
 					}
 				}
 				if (smallerThan(childMin, parent))
 				{
+					
 					//downheap
 					swap(childMin, parent);
+					
+
 					parent = childMin;
+					
+
 					childLeft = parent * 2 + 1;
+					
 				}
+				break;
 			}
 			middle--;
+			
 		}
 	}
 
@@ -170,6 +193,14 @@ public class MinHeap
 	public boolean smallerThan(int a, int b)
 	{
 		if (data[a].compareTo(data[b]) < 0)
+			return true;
+		return false;
+	}
+
+	//use compareTo() method from String to compare
+	public boolean smallerThan(String a, String b)
+	{
+		if (a.compareTo(b) < 0)
 			return true;
 		return false;
 	}
@@ -183,12 +214,38 @@ public class MinHeap
 		data[b] = tempA;
 	}
 
-	///////////////////a test program for MinHeap///////////////////
+	//return the root item
+	public String peek()
+	{
+		String result = null;
+		if (pointer > 0)
+		{
+			return data[0];
+		}
+		return result;
+	}
 
+	//return the current capacity of the heap
+	public int capacity()
+	{
+		return pointer;
+	}
+
+	//set capacity of the heap
+	public void setCapacity(int size)
+	{
+		pointer = size;
+	}
+
+	//get the String at specified position
 	public String get(int position)
 	{
 		return data[position];
 	}
+
+	///////////////////a test program for MinHeap///////////////////
+
+	
 	public static void main(String [] args)
 	{
 		MinHeap heapT = new MinHeap(5);
@@ -207,6 +264,9 @@ public class MinHeap
 		System.out.println("--- replace the root item in the heap and out put the old root ---");
 		System.out.println(heapT.replace("ffffdd"));
 
+		System.out.println("--- test if root is less than the last item ---");
+		System.out.println(heapT.smallerThan(heapT.peek(), heapT.get(4)));
+
 		System.out.println("--- remove all the items one by one ---");
 		System.out.println(heapT.remove());
 		System.out.println(heapT.remove());
@@ -223,6 +283,7 @@ public class MinHeap
 		heapT.reheap(5);
 		for (int i = 0; i < 5; i++)
 			System.out.println(heapT.get(i));
+
 	}
 
 }
