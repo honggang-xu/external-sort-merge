@@ -92,11 +92,11 @@ public class MakeRuns
 			{
 				writer.println(heap.get(i));
 			}
-			writer.println("-end of run");
+			writer.print("-end of run");
 			runs++;
-			writer.println("-end of file");
-			writer.println("-number of runs:");
-			writer.println(runs);
+			//writer.print("-end of file");
+			//writer.println("-number of runs:");
+			//writer.println(runs);
 			writer.close();
 		}
 		catch (Exception ex)
