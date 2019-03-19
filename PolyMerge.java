@@ -205,13 +205,13 @@ public class PolyMerge
 
 		return outputArray;
 	}
-	/*
+	
 	//merge one run from each of the input files untill one input file is empty
 	private static void merge(File[] inputFiles, int[] inputRuns) throws IOException
 	{
 		//create a MinHeap to store the smallest item in one run for all the files 
 		//!!!!!!!
-		MinHeap heap = new MinHeap(100000000);
+		MinHeap heap = new MinHeap(inputFiles.length - 1);
 		System.out.println("heap created");
 
 		//find the file that is going to be the output file
@@ -221,19 +221,110 @@ public class PolyMerge
 			if (inputRuns[i] == 0)
 				indexOut = i;
 		}
-			//set the output file
+		//set the output file
 		PrintWriter output = new PrintWriter(new FileWriter(inputFiles[indexOut]));
-			//set the input file
+		//set the input file
 		BufferedReader[] input = createReaders(inputFiles, indexOut);
 
 		String line;
-		String outputLine;
+		String outputLine = null;
+		int fileToUse = inputFiles.length - 1;
+
 		List<Integer> indexToSkip = new ArrayList<Integer>();
 
+
+		boolean finalphase = false;
+		boolean finished = false;
+
+		//total runs remaining
 		int totalRuns = sumOfArray(inputRuns);
-		while (totalRuns > 1)
+
+
+		int runsForPhase = totalRuns;
+
+		//the index of the array that the last output belongs to
+		String[] miniumIndex = new String[inputFiles.length];
+		
+
+		//while not finished
+		while (!finished)
 		{
-			//loop through each the input file
+			if (!finalphase)
+			{
+				//find the minium runs for this phase
+				for (int i = 0; i < inputRuns.length; i++)
+				{
+					if (i != indexOut)
+					{
+						if (inputRuns[i] < runsForPhase)
+						{
+							runsForPhase = inputRuns[i];
+						}
+					}
+				}
+				int runsRead = 0;
+				//for each phase
+				while (runsRead != runsForPhase * (inputFiles.length - 1))
+				{
+					//read
+				}
+
+				//after reading all the runs for this phase
+
+				//empty the heap
+
+				//if this phase is not the final phase
+
+				//set output file as input, 
+				//and set the input file whose runs are exhausted as output file
+
+				//set the array of the index of file that need to skipped to empty
+			}
+				//then it is the final phase
+			else
+			{
+				//solution for the final phase
+			}
+
+			//if the total is equal to the number of files as input
+			//then it means the upcoming phase is the final phase
+			//so after finish this phase, no need to swicth input and output file
+			//one output file is produced, other files should be destroyed
+
+			//if the runs processed for this phase is over
+			if (runsRead == runsForPhase * (inputFiles.length - 1))
+			{
+				for (int i = 0; i < inputRuns.length; i++)
+				{
+					if (inputRuns[i] == 0)
+					{
+						inputRuns[i] = runsForPhase;
+					}
+					else
+					{
+						inputRuns[i] -= runsForPhase;
+					}
+				}
+			}
+
+			totalRuns = sumOfArray(inputRuns);
+
+			runsForPhase = totalRuns;
+
+			if (totalRuns == inputFiles.length - 1)
+				finalphase = true;
+
+			if (totalRuns == 1)
+				finished = true;
+		}
+
+
+
+		
+		if (heap.capacity() < fileToUse)
+		{
+			System.out.println("evaluate");
+				//loop through each the input file
 			for (int i = 0; i < input.length; i++)
 			{
 				if (i != indexOut)
@@ -245,11 +336,12 @@ public class PolyMerge
 							if (line.equals( "-end of run"))
 							{
 								indexToSkip.add(i);
-								totalRuns--;
+								runsRead++;
 							}
 							else
 							{
 								heap.insert(line);
+								miniumIndex[i] = line;
 								System.out.println("one added");
 							}
 						}
@@ -257,8 +349,9 @@ public class PolyMerge
 						//all the runs in one file is exhausted meaning on phase is completed
 						//save the index and use file as output file
 						//also make the output file available to be used as input
-						else if (totalRuns > inputFiles.length - 1)
+						else
 						{
+							//!!!!!!!!!
 							output.close();
 							input[indexOut] = new BufferedReader(new FileReader(inputFiles[indexOut]));
 							output = new PrintWriter(new FileWriter(inputFiles[i]));
@@ -271,12 +364,52 @@ public class PolyMerge
 					indexToSkip.clear();
 				}
 			}
-			outputLine = heap.remove();
-			System.out.println("output one item");
-			System.out.println(indexOut);
-			output.println(outputLine);
+			outputLine = heap.peek();
+			System.out.println("peeked on item");
+			System.out.println(indexOut);	
+		}
+		else
+		{
+			int indexOfMin = 0;
+			for (int i = 0; i < miniumIndex.length; i++)
+			{
+				if (outputLine == miniumIndex[i])
+				{
+					indexOfMin = i;
+					line = input[i].readLine();
+					if ((line = input[i].readLine()) != null)
+					{
+						if (!line.equals("-end of run"))
+						{
+							outputLine = heap.replace(line);
+							System.out.println("replaced one");
+							miniumIndex[indexOfMin] = line;
+							output.println(outputLine);
+							System.out.println(outputLine);
+							outputLine = heap.peek();
+						}
+						else
+						{
+							indexToSkip.add(i);
+							runsRead--;
+							miniumIndex[indexOfMin] = null;
+							outputLine = heap.remove();
+							System.out.println("removed one");
+							output.println(outputLine);
+							fileToUse--;
+						}
+					}
+					else if (runsRead > inputFiles.length - 1)
+					{
+						output.close();
+						input[indexOut] = new BufferedReader(new FileReader(inputFiles[indexOut]));
+						output = new PrintWriter(new FileWriter(inputFiles[i]));
+						indexOut = i;
+					}
+				}
+
+			}
 		}
 		output.close();
 	}
-	*/
 }
