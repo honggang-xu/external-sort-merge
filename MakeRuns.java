@@ -88,9 +88,9 @@ public class MakeRuns
 			//when inputFile is empty, reheap the heap and output the heap
 			heap.reheap(size);
 
-			for (int i = 0; i < size; i++)
+			while (heap.capacity() != 0)
 			{
-				writer.println(heap.get(i));
+				writer.println(heap.remove());
 			}
 			writer.print("-end of run");
 			runs++;
