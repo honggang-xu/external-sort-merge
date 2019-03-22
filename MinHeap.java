@@ -84,7 +84,11 @@ public class MinHeap
 						parent = childMin;
 						childLeft = parent * 2 + 1;
 					}
-					break;
+					else
+					{
+						break;
+					}
+					//break;
 				}	
 			}
 		}
@@ -126,67 +130,61 @@ public class MinHeap
 					parent = childMin;
 					childLeft = parent * 2 + 1;
 				}
-				break;
+				else
+				{
+					break;
+				}
+				//break;
 			}
 		}
 		return result;
 	}
 
 	//heap sort the items in the heap that is of a specified size
-	public void reheap(int size) {
+	public void reheap(int size)
+	{
 		//the first possible parent node is the middle point
 
+		//replace size with pointer
 		int middle = size / 2 - 1;
 
 		while (middle >= 0)
 		{
 			int parent = middle;
-			
-
 			//left child
 			int childLeft = parent * 2 + 1;
 			
 			//try to downheap if the condition is true
 			while (childLeft < size)
 			{
-				
-
 				//right child
 				int childRight = parent * 2 + 2;
-				
-
 				//assume the mininum of the two children is left child
 				int childMin = childLeft;
 				
-
 				if (childRight < size)
 				{
-					
 					if (smallerThan(childRight, childLeft))
 					{
-						
 						childMin = childRight;
-						
 					}
 				}
 				if (smallerThan(childMin, parent))
 				{
-					
 					//downheap
 					swap(childMin, parent);
-					
-
 					parent = childMin;
-					
-
 					childLeft = parent * 2 + 1;
-					
 				}
-				break;
+				else
+				{
+					break;
+				}
+				//break;
 			}
 			middle--;
-			
 		}
+		System.out.println("out of the loop");
 	}
 
 	//use compareTo() method from String to compare
