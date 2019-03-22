@@ -28,6 +28,7 @@ public class PolyMerge
 			String inputFileName = args[2];
 			/*
 			//not sure about this condition checking
+			//but the files to use have to be bigger than 2
 			if(numberOfFiles >= numberOfRuns + 1)
 			{
 				System.out.println("The maximun number of files to use can only be one more than the number of runs");
@@ -95,7 +96,7 @@ public class PolyMerge
 			}
 
 			//merge phase
-			//merge(filesForTape, runsArray);
+			merge(filesForTape, runsArray);
 		}
 		catch (Exception ex)
 		{
@@ -210,9 +211,7 @@ public class PolyMerge
 	private static void merge(File[] inputFiles, int[] inputRuns) throws IOException
 	{
 		//create a MinHeap to store the smallest item in one run for all the files 
-		//!!!!!!!
 		MinHeap heap = new MinHeap(inputFiles.length - 1);
-		System.out.println("heap created");
 
 		//find the file that is going to be the output file
 		int indexOut = 0;
@@ -232,65 +231,180 @@ public class PolyMerge
 
 		List<Integer> indexToSkip = new ArrayList<Integer>();
 
-
 		boolean finalphase = false;
 		boolean finished = false;
 
 		//total runs remaining
 		int totalRuns = sumOfArray(inputRuns);
 
-
-		int runsForPhase = totalRuns;
-
 		//the index of the array that the last output belongs to
 		String[] miniumIndex = new String[inputFiles.length];
 		
+		int nextOut = 0;
+
+		//********abcd not output e
+		
+		if (totalRuns == inputFiles.length - 1)
+			finalphase = true;
+
+		/*
+		if (totalRuns == 1)
+			finished = true;
+		*/
 
 		//while not finished
 		while (!finished)
 		{
-			if (!finalphase)
+			int runsForPhase = totalRuns;
+			//trying this to overcome the index error
+			for (int i = 0; i < inputRuns.length; i++)
 			{
-				//find the minium runs for this phase
-				for (int i = 0; i < inputRuns.length; i++)
+				if (inputRuns[i] == 0)
+					indexOut = i;
+			}
+
+			//find the minium runs for this phase
+			for (int i = 0; i < inputRuns.length; i++)
+			{
+				if (i != indexOut)
 				{
-					if (i != indexOut)
+					if (inputRuns[i] < runsForPhase)
 					{
-						if (inputRuns[i] < runsForPhase)
-						{
-							runsForPhase = inputRuns[i];
-						}
+						runsForPhase = inputRuns[i];
 					}
 				}
-				int runsRead = 0;
-				//for each phase
-				while (runsRead != runsForPhase * (inputFiles.length - 1))
-				{
-					//read
-				}
-
-				//after reading all the runs for this phase
-
-				//empty the heap
-
-				//if this phase is not the final phase
-
-				//set output file as input, 
-				//and set the input file whose runs are exhausted as output file
-
-				//set the array of the index of file that need to skipped to empty
 			}
-				//then it is the final phase
-			else
+			//problem!!!!!!!!!!!!!
+			int runsRead = 0;
+
+			//for each phase
+			while (runsRead < runsForPhase * (inputFiles.length - 1))
 			{
-				//solution for the final phase
+				/*
+				if (indexToSkip.size() == inputFiles.length - 1)
+				{
+					fileToUse = inputFiles.length - 1;
+					indexToSkip.clear();
+					miniumIndex = new String[inputFiles.length];
+					
+					/*
+					while (heap.capacity() != 0)
+					{
+						output.println(heap.remove());
+					}
+
+					output.println("-end of run");
+					System.out.println("printed end of run");
+					
+				}
+				*/
+
+				//read
+				//|| (heap.capacity() + fileToUse) != 0
+				if (heap.capacity() < fileToUse)
+				{
+				//loop through each the input file
+					for (int i = 0; i < input.length; i++)
+					{
+						if (i != indexOut)
+						{
+							if (!indexToSkip.contains(i))
+							{
+								if ((line = input[i].readLine()) != null)
+								{
+									if (!line.equals("-end of run"))
+									{
+										heap.insert(line);
+										miniumIndex[i] = line;
+										System.out.println("added" + line + "to the heap");
+									}
+									else
+									{
+										indexToSkip.add(i);
+										runsRead++;
+										fileToUse--;
+									}
+								}
+
+						//all the runs in one file is exhausted meaning on phase is completed
+						//save the index and use file as output file
+						//also make the output file available to be used as input
+								else
+								{
+									//indexToSkip.add(i);
+									nextOut = i;
+								}
+							}	
+						}
+					}
+					outputLine = heap.peek();
+				}
+				else
+				{
+					int indexOfMin = 0;
+					for (int i = 0; i < miniumIndex.length; i++)
+					{
+						if (miniumIndex[i] == outputLine)
+						{
+							indexOfMin = i;
+						}
+					}
+					line = input[indexOfMin].readLine();
+					if (line != null)
+					{
+						if (!line.equals("-end of run"))
+						{
+							outputLine = heap.replace(line);
+							System.out.println("root replaced by" + line + "to the heap");
+							miniumIndex[indexOfMin] = line;
+							output.println(outputLine);
+							System.out.println("printed" + outputLine);
+							System.out.println(runsRead);
+							System.out.println(runsForPhase);
+							outputLine = heap.peek();
+						}
+						else
+						{
+							indexToSkip.add(indexOfMin);
+							runsRead++;
+							miniumIndex[indexOfMin] = null;
+							outputLine = heap.remove();
+							System.out.println("removed" + outputLine);
+							output.println(outputLine);
+							System.out.println("printed" + outputLine);
+							System.out.println(runsRead);
+							System.out.println(runsForPhase);
+							fileToUse--;
+							outputLine = heap.peek();
+						}
+					}
+					else
+					{
+						//indexToSkip.add(indexOfMin);
+						nextOut = indexOfMin;
+					}
+					
+					
+					if (indexToSkip.size() == inputFiles.length - 1)
+					{
+						fileToUse = inputFiles.length - 1;
+						indexToSkip.clear();
+						miniumIndex = new String[inputFiles.length];
+						/*
+						while (heap.capacity() != 0)
+						{
+							output.println(heap.remove());
+						}
+						*/
+						output.println("-end of run");
+						System.out.println("printed end of run");
+					}
+					
+				}
 			}
 
-			//if the total is equal to the number of files as input
-			//then it means the upcoming phase is the final phase
-			//so after finish this phase, no need to swicth input and output file
-			//one output file is produced, other files should be destroyed
-
+			System.out.println("finished one phase");
+			//after reading all the runs for this phase
 			//if the runs processed for this phase is over
 			if (runsRead == runsForPhase * (inputFiles.length - 1))
 			{
@@ -305,111 +419,67 @@ public class PolyMerge
 						inputRuns[i] -= runsForPhase;
 					}
 				}
-			}
-
-			totalRuns = sumOfArray(inputRuns);
-
-			runsForPhase = totalRuns;
-
-			if (totalRuns == inputFiles.length - 1)
-				finalphase = true;
-
-			if (totalRuns == 1)
-				finished = true;
-		}
-
-
-
-		
-		if (heap.capacity() < fileToUse)
-		{
-			System.out.println("evaluate");
-				//loop through each the input file
-			for (int i = 0; i < input.length; i++)
-			{
-				if (i != indexOut)
+				//not necessarily needed
+				//empty the heap
+				while (heap.capacity() != 0)
 				{
-					if (!indexToSkip.contains(i))
-					{
-						if ((line = input[i].readLine()) != null)
-						{
-							if (line.equals( "-end of run"))
-							{
-								indexToSkip.add(i);
-								runsRead++;
-							}
-							else
-							{
-								heap.insert(line);
-								miniumIndex[i] = line;
-								System.out.println("one added");
-							}
-						}
+					output.println(heap.remove());
+				}
 
-						//all the runs in one file is exhausted meaning on phase is completed
-						//save the index and use file as output file
-						//also make the output file available to be used as input
-						else
-						{
-							//!!!!!!!!!
-							output.close();
-							input[indexOut] = new BufferedReader(new FileReader(inputFiles[indexOut]));
-							output = new PrintWriter(new FileWriter(inputFiles[i]));
+				miniumIndex = new String[inputFiles.length];
+				indexToSkip.clear();
+				//if this phase is not the final phase
+				if (!finalphase)
+				{
+				//set output file as input, 
+				//and set the input file whose runs are exhausted as output file
+					output.println("-end of run");
+					output.close();
+					input[indexOut] = new BufferedReader(new FileReader(inputFiles[indexOut]));
+
+					for (int i = 0; i < inputRuns.length; i++)
+					{
+						if (inputRuns[i] == 0)
 							indexOut = i;
-						}
-					}	
-				}
-				if (indexToSkip.size() == inputFiles.length - 1)
-				{
-					indexToSkip.clear();
-				}
-			}
-			outputLine = heap.peek();
-			System.out.println("peeked on item");
-			System.out.println(indexOut);	
-		}
-		else
-		{
-			int indexOfMin = 0;
-			for (int i = 0; i < miniumIndex.length; i++)
-			{
-				if (outputLine == miniumIndex[i])
-				{
-					indexOfMin = i;
-					line = input[i].readLine();
-					if ((line = input[i].readLine()) != null)
-					{
-						if (!line.equals("-end of run"))
-						{
-							outputLine = heap.replace(line);
-							System.out.println("replaced one");
-							miniumIndex[indexOfMin] = line;
-							output.println(outputLine);
-							System.out.println(outputLine);
-							outputLine = heap.peek();
-						}
-						else
-						{
-							indexToSkip.add(i);
-							runsRead--;
-							miniumIndex[indexOfMin] = null;
-							outputLine = heap.remove();
-							System.out.println("removed one");
-							output.println(outputLine);
-							fileToUse--;
-						}
 					}
-					else if (runsRead > inputFiles.length - 1)
-					{
-						output.close();
-						input[indexOut] = new BufferedReader(new FileReader(inputFiles[indexOut]));
-						output = new PrintWriter(new FileWriter(inputFiles[i]));
-						indexOut = i;
-					}
+					//output = new PrintWriter(new FileWriter(inputFiles[nextOut]));
+					output = new PrintWriter(new FileWriter(inputFiles[indexOut]));
+					//indexOut = nextOut;
+					totalRuns = sumOfArray(inputRuns);
 				}
 
+				//if the total is equal to the number of files as input
+				//then it means the upcoming phase is the final phase
+				//so after finish this phase, no need to swicth input and output file
+				//one output file is produced, other files should be destroyed
+				else
+				{
+					System.out.println("indeOut: " + indexOut);
+					output.close();
+					totalRuns = sumOfArray(inputRuns);
+				}
+
+				//then it is the final phase
+				//it should delete all other files excepet the file that contains the final sorted file
+				//set the array of the index of file that need to skipped to empty
+				//totalRuns = sumOfArray(inputRuns);
+				//runsForPhase = totalRuns;
+
+				if (totalRuns == inputFiles.length - 1)
+				{
+					finalphase = true;
+					System.out.println("next is the final phase");
+				}
+				
+				
+				if (totalRuns == 1)
+				{
+					finished = true;
+					System.out.println("the process is finished");
+				}
+				
+				line = null;
 			}
 		}
-		output.close();
 	}
 }
