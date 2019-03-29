@@ -1,8 +1,17 @@
+//Salim Al Farsi (1258330)
+//Honggang Xu (1369387)
+
 import java.io.FileReader;
 import java.io.BufferedReader;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 
+/*
+MakeRuns accepts standard inputs as the size of the MinHeap to use and the file to process.
+Then it creates initial runs using the replacement selection strategy.
+These runs are written to a single temporary file.
+It also output the number of runs.
+*/
 public class MakeRuns
 {
 	private static int size;
@@ -17,6 +26,7 @@ public class MakeRuns
 	{
 		try
 		{
+			//size fo the heap
 			size = Integer.parseInt(args[0]);
 			heap = new MinHeap(size);
 
@@ -32,11 +42,12 @@ public class MakeRuns
 		}
 		catch (Exception ex)
 		{
-			System.err.println("usage: <number> <file>");
+			System.err.println("Usage: Java MakeRuns <number> <file>");
 			ex.printStackTrace();
 		}		
 	}
 
+	//replacement selection strategy to produce output
 	private static void replacementSelection(BufferedReader inputFile, PrintWriter writer)
 	{
 		String line = null;
@@ -58,7 +69,7 @@ public class MakeRuns
 				}
 			}
 
-			
+			//while has input
 			while (hasInput)
 			{	
 				//while root can go into current run
@@ -88,9 +99,8 @@ public class MakeRuns
 				//check if heap's capacity is reduced to 0
 				if (heap.capacity() == 0)
 				{
+					//then one run is finished
 					writer.println("-end of run");
-					//////
-					//writer.println("when heap is empty");
 					runs++;
 					heap.reheap(size);
 					heap.setCapacity(size);
@@ -98,22 +108,16 @@ public class MakeRuns
 					removed = 0;
 				}
 			}
-			//when inputFile is empty, reheap the heap and output the heap
+			//when inputFile is empty, reheap the heap and output what's left in the heap
 			heap.setCapacity(heap.capacity() + removed);
-			//writer.println("removed: " + removed);
-			//writer.println("capacity: " + heap.capacity());
-			System.out.println("about to enter reheap process");
-			System.out.println("capacity is: " + heap.capacity());
 			heap.reheap(heap.capacity());
-			System.out.println("finished reheap");
+
 			if (heap.capacity() > 0)
 			{
 				if (removed != 0)
 				{
 					writer.println("-end of run");
 					runs++;
-					///
-					//writer.println("with no more input");
 				}
 				
 				while (heap.capacity() != 0)
@@ -123,14 +127,8 @@ public class MakeRuns
 						writer.println(out);
 				}
 				writer.print("-end of run");
-				///
-				//writer.println("the final indication");
 				runs++;
 			}
-			
-			//writer.print("-end of file");
-			//writer.println("-number of runs:");
-			//writer.println(runs);
 			writer.close();
 		}
 		catch (Exception ex)
