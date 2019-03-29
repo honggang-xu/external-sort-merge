@@ -1,5 +1,10 @@
+//Salim Al Farsi (1258330)
+//Honggang Xu (1369387)
 
-
+/*
+A MinHeap program that the root of the heap is the smallest
+and root of every subheap is the smallest of all in that subheap.
+*/
 public class MinHeap
 {
 	//array to represent the MinHeap
@@ -184,7 +189,6 @@ public class MinHeap
 			}
 			middle--;
 		}
-		System.out.println("out of the loop");
 	}
 
 	//use compareTo() method from String to compare
@@ -243,7 +247,7 @@ public class MinHeap
 
 	///////////////////a test program for MinHeap///////////////////
 
-	
+	/*
 	public static void main(String [] args)
 	{
 		MinHeap heapT = new MinHeap(5);
@@ -281,7 +285,7 @@ public class MinHeap
 		heapT.reheap(5);
 		for (int i = 0; i < 5; i++)
 			System.out.println(heapT.get(i));
-
 	}
+	*/
 
 }
